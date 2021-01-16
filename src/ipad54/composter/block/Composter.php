@@ -75,6 +75,11 @@ class Composter extends Opaque
         parent::__construct($idInfo, "Composter", $breakInfo ?? new BlockBreakInfo(0.75, BlockToolType::AXE));
     }
 
+    public function getFuelTime(): int
+    {
+        return 300;
+    }
+
     protected function writeStateToMeta(): int
     {
         return $this->fill;

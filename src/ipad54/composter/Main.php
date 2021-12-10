@@ -15,7 +15,7 @@ use pocketmine\plugin\PluginBase;
 class Main extends PluginBase
 {
 
-    protected function onLoad()
+    protected function onLoad() : void
     {
         BlockFactory::getInstance()->register(new Composter(new BID(IDS::COMPOSTER, 0, ItemIds::COMPOSTER)));
     }

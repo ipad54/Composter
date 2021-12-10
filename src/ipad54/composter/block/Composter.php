@@ -99,9 +99,9 @@ class Composter extends Opaque
     {
         if ($this->fill >= 8) {
             $this->fill = 0;
-            $this->pos->getWorld()->setBlock($this->pos, $this);
-            $this->pos->getWorld()->addSound($this->pos, new ComposteEmptySound());
-            $this->pos->getWorld()->dropItem($this->pos, VanillaItems::BONE_MEAL());
+            $this->position->getWorld()->setBlock($this->position, $this);
+            $this->position->getWorld()->addSound($this->position, new ComposteEmptySound());
+            $this->position->getWorld()->dropItem($this->position, VanillaItems::BONE_MEAL());
             return true;
         }
         if (isset($this->ingridients[$item->getId()]) && $this->fill < 7) {
@@ -116,7 +116,7 @@ class Composter extends Opaque
                 $this->incrimentFill(true);
                 return true;
             }
-            $this->pos->getWorld()->addSound($this->pos, new ComposteFillSound());
+            $this->position->getWorld()->addSound($this->position, new ComposteFillSound());
         }
         return true;
     }
@@ -128,12 +128,12 @@ class Composter extends Opaque
             return false;
         }
         if (++$this->fill >= 7) {
-            $this->pos->getWorld()->scheduleDelayedBlockUpdate($this->pos, 25);
+            $this->position->getWorld()->scheduleDelayedBlockUpdate($this->position, 25);
         } else {
-            $this->pos->getWorld()->setBlock($this->pos, $this);
+            $this->position->getWorld()->setBlock($this->position, $this);
         }
         if ($playsound) {
-            $this->pos->getWorld()->addSound($this->pos, new ComposteFillSuccessSound());
+            $this->position->getWorld()->addSound($this->position, new ComposteFillSuccessSound());
         }
         return true;
     }
@@ -142,8 +142,8 @@ class Composter extends Opaque
     {
         if ($this->fill == 7) {
             ++$this->fill;
-            $this->pos->getWorld()->setBlock($this->pos, $this);
-            $this->pos->getWorld()->addSound($this->pos, new ComposteReadySound());
+            $this->position->getWorld()->setBlock($this->position, $this);
+            $this->position->getWorld()->addSound($this->position, new ComposteReadySound());
         }
     }
 }

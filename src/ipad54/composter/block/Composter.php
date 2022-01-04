@@ -96,11 +96,11 @@ class Composter extends Opaque
         return 0b1111;
     }
 
-    public function spawnParticleEffect(Vector3 $position, string $particleName): void
+    private function spawnParticleEffect(Vector3 $position): void
     {
         $packet = new SpawnParticleEffectPacket();
         $packet->position = $position;
-        $packet->particleName = $particleName;
+        $packet->particleName = "minecraft:crop_growth_emitter";
         $recipients = $this->position->getWorld()->getViewersForPosition($this->position);
         foreach($recipients as $player){
             $player->getNetworkSession()->sendDataPacket($packet);
@@ -118,26 +118,20 @@ class Composter extends Opaque
         }
         if (isset($this->ingridients[$item->getId()]) && $this->fill < 7) {
             $item->pop();
-            $position = $this->position->add(0.5, 0.5, 0.5);
-            $particleName = "minecraft:crop_growth_emitter";
+            $this->spawnParticleEffect($this->position->add(0.5, 0.5, 0.5));
             if ($this->fill == 0) {
-
                 $this->incrimentFill(true);
-                $this->spawnParticleEffect($position, $particleName);
                 return true;
             }
             $chance = $this->ingridients[$item->getId()];
             if (mt_rand(0, 100) <= $chance) {
                 $this->incrimentFill(true);
-                $this->spawnParticleEffect($position, $particleName);
                 return true;
             }
             $this->position->getWorld()->addSound($this->position, new ComposteFillSound());
-            $this->spawnParticleEffect($position, $particleName);
         }
         return true;
     }
-
 
     public function incrimentFill(bool $playsound = false): bool
     {

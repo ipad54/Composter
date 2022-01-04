@@ -4,6 +4,7 @@
 namespace ipad54\composter\block;
 
 
+use pocketmine\network\mcpe\protocol\SpawnParticleEffectPacket;
 use ipad54\composter\sound\ComposteEmptySound;
 use ipad54\composter\sound\ComposteFillSound;
 use ipad54\composter\sound\ComposteFillSuccessSound;
@@ -95,28 +96,44 @@ class Composter extends Opaque
         return 0b1111;
     }
 
+    public function spawnParticleEffect(Vector3 $position, string $particleName): void
+    {
+        $packet = new SpawnParticleEffectPacket();
+        $packet->position = $position;
+        $packet->particleName = $particleName;
+        $recipients = $this->position->getWorld()->getViewersForPosition($this->position);
+        foreach($recipients as $player){
+            $player->getNetworkSession()->sendDataPacket($packet);
+        }
+    }
+
     public function onInteract(Item $item, int $face, Vector3 $clickVector, ?Player $player = null): bool
     {
         if ($this->fill >= 8) {
             $this->fill = 0;
             $this->position->getWorld()->setBlock($this->position, $this);
             $this->position->getWorld()->addSound($this->position, new ComposteEmptySound());
-            $this->position->getWorld()->dropItem($this->position, VanillaItems::BONE_MEAL());
+            $this->position->getWorld()->dropItem($this->position->add(0.5, 1.1, 0.5), VanillaItems::BONE_MEAL());
             return true;
         }
         if (isset($this->ingridients[$item->getId()]) && $this->fill < 7) {
             $item->pop();
+            $position = $this->position->add(0.5, 0.5, 0.5);
+            $particleName = "minecraft:crop_growth_emitter";
             if ($this->fill == 0) {
 
                 $this->incrimentFill(true);
+                $this->spawnParticleEffect($position, $particleName);
                 return true;
             }
             $chance = $this->ingridients[$item->getId()];
             if (mt_rand(0, 100) <= $chance) {
                 $this->incrimentFill(true);
+                $this->spawnParticleEffect($position, $particleName);
                 return true;
             }
             $this->position->getWorld()->addSound($this->position, new ComposteFillSound());
+            $this->spawnParticleEffect($position, $particleName);
         }
         return true;
     }

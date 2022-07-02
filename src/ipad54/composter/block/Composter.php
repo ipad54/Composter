@@ -101,7 +101,6 @@ class Composter extends Opaque
         $packet = new SpawnParticleEffectPacket();
         $packet->position = $position;
         $packet->particleName = "minecraft:crop_growth_emitter";
-        $packet->molangVariablesJson = "";
         $recipients = $this->position->getWorld()->getViewersForPosition($this->position);
         foreach($recipients as $player){
             $player->getNetworkSession()->sendDataPacket($packet);
